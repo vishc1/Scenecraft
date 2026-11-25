@@ -323,3 +323,15 @@ return finish(Object.assign({fog:[0x0a0810,.004],shift:.26,bloom:.9,cams:[{p:[-1
     for(let i=0;i<M;i++){ const t=(fs[i*2]+st.T*.12)%1; fp[i*3]=Math.sin(i*12.9)*(.1+t*1.4); fp[i*3+1]=20.5+fs[i*2+1]*18-t*6; fp[i*3+2]=Math.cos(i*7.3)*(.1+t*1.4); } fray.geometry.attributes.position.needsUpdate=true; }}; }},o.over||{}),o);
 };
 
+/* towers: one tower per item, standing in calm water, heights following your numbers. Options: items:[{label, value, note, show}] (2 to 8; `show` is the text printed for the value). 2 beats. Labels come from the items. */
+WORLDS.towers=(o={})=>{ const D=(o.items&&o.items.length>1?o.items:[{label:'First',value:1},{label:'Second',value:2},{label:'Third',value:4}]).slice(0,8), n=D.length, mx=Math.max(...D.map(d=>Math.abs(+d.value)||0))||1, gap=n>6?7:9, X=i=>(i-(n-1)/2)*gap, Hh=d=>2+14*(Math.abs(+d.value)||0)/mx, dist=Math.max(42,n*gap*.92+8);
+  return finish(Object.assign({scrimS:true,far:6000,drift:.25,bloom:1,
+   cams:[{p:[-dist*.55,3,dist*.62],l:[-6,5,0],f:40},{p:[0,7,dist],l:[0,5.5,0],f:44},{p:[dist*.2,9,dist*.95],l:[2,6,0],f:44}],
+   tags:D.map((d,i)=>({b:[0,3],c:'w',d:500+i*220,at:()=>[X(i),-2.8,3.2],h:'<h3>'+(d.show===undefined?d.value:d.show)+'</h3><p class="lab hi" style="margin:6px 0 8px">'+(d.label||'')+'</p>'+(d.note?'<p class="lab" style="letter-spacing:0">'+d.note+'</p>':'')})),
+   build({scene}){ const env=K.env(scene,'blue',{amp:.2,fog:.0035}); [[-190,-520,170,70,4],[260,-700,240,110,9],[40,-1300,320,130,6]].forEach(a=>scene.add(K.island(...a)));
+    const items=D.map((d,i)=>{ const h=Hh(d), col=new THREE.Color().lerpColors(L(THEME.paper),L(THEME.accent),n>1?i/(n-1):1), g=new THREE.Group(); g.position.x=X(i);
+      const body=new THREE.Mesh(new THREE.BoxGeometry(2.6,h,2.6),K.std(0x141a20,{roughness:.3,metalness:.6})); body.position.y=h/2; g.add(body);
+      const strip=new THREE.Mesh(new THREE.BoxGeometry(.3,h*.92,.06),new THREE.MeshBasicMaterial({color:0x000000})); strip.position.set(0,h/2,1.32); g.add(strip);
+      const cap=new THREE.Mesh(new THREE.BoxGeometry(2.7,.08,2.7),new THREE.MeshBasicMaterial({color:0x000000})); cap.position.y=h+.04; g.add(cap);
+      const pl=new THREE.PointLight(col,0,30,1.8); pl.position.set(0,h*.7,6); g.add(pl); scene.add(g); return {col,strip,cap,pl}; });
+    return {env,update(st){ items.forEach((it,i)=>{ const on=clamp01(st.P[0]*n-i); it.strip.material.color.copy(it.col).multiplyScalar(on*5); it.cap.material.color.copy(it.col).multiplyScalar(on*3); it.pl.intensity=on*.9; }); }}; }},o.over||{}),o); };

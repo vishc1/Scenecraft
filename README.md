@@ -4,6 +4,8 @@ Turns any topic into a cinematic 3D talk: every slide is a live world with a fly
 
 ![Title scene: an eclipse over a night sea with a lighthouse](docs/title.gif)
 
+**[See a live talk built with it: The Intelligence Explosion](https://claude.ai/artifact/J4SyaHXBnjDKvprNXqGWYJ)** (14 scenes; right arrow or click to advance, `N` for speaker notes).
+
 Scenecraft is a skill for [Claude Code](https://claude.com/claude-code). It gives Claude a tested 3D engine, an environment kit and a library of ready-made worlds, so its effort goes into your story instead of the plumbing. You can also use it by hand.
 
 ## What it can do
@@ -28,11 +30,11 @@ Built in:
 - Speaker notes, an overview, full screen, keyboard and swipe controls
 - Phone layout, reduced-motion support, and automatic resolution scaling on slow GPUs
 
-## Thirteen ready-made worlds
+## Fourteen ready-made worlds
 
 ![Twelve of the library worlds](docs/gallery.jpg)
 
-`sea` · `pages` · `planet` · `monoliths` · `stairs` · `blocks` · `tunnel` · `gyro` · `city` · `scaleTower` · `ribbons` · `pier` · `hangingSun`
+`sea` · `pages` · `planet` · `towers` · `monoliths` · `stairs` · `blocks` · `tunnel` · `gyro` · `city` · `scaleTower` · `ribbons` · `pier` · `hangingSun`
 
 Each is one line to use, and you can add your own. See [references/worlds.md](references/worlds.md).
 
@@ -53,6 +55,25 @@ Claude writes the story as click-through steps, picks or builds a world for each
 **3. Present it**
 
 Open the file in a browser. Right arrow or click advances, left arrow goes back, `N` shows speaker notes, `O` the overview, `F` full screen, `?` the key list.
+
+### Start from a slideshow you already have
+
+Give Claude a PowerPoint file, a PDF, a Markdown outline or a Google Slides export and ask it to turn the deck into a Scenecraft talk. Or run the importer yourself:
+
+```sh
+python3 scripts/slides_in.py deck.pptx --draft out/scenes-draft.js
+scripts/build.sh out/talk.html "My talk" out/scenes-draft.js
+open out/talk.local.html
+```
+
+Every slide becomes a scene. Titles, bullets, tables and speaker notes are carried over; a table or bullets with numbers become towers, a quotation gets the storm of pages, a slide about a loop gets the gyroscope, and so on. At most four short lines stay on screen and the rest moves to the speaker notes. Pictures are counted but not imported. The result is a first draft: the worlds are picked by simple rules, so expect to swap some.
+
+| Input | How |
+|---|---|
+| `.pptx` | read directly (Google Slides and Keynote can export it) |
+| `.pdf` | needs the `pdftotext` command; text only |
+| `.md` / `.txt` | `# Title` starts a slide, `- ` lines are bullets, `Notes:` starts speaker notes |
+| folder of slide `.html` files | for example a Claude Slides artifact's `project/slides/` |
 
 ### Try it without Claude
 
@@ -103,9 +124,10 @@ To share a world you built, give it the library shape (`WORLDS.name = (options) 
 |---|---|
 | `SKILL.md` | The instructions Claude follows: story first, one visual idea per scene, build, look at every scene, publish |
 | `assets/engine/` | The engine and the environment kit (ocean, skies, islands, birds) |
-| `assets/library/worlds.js` | The thirteen ready-made worlds |
+| `assets/library/worlds.js` | The fourteen ready-made worlds |
 | `assets/examples/` | `starter-any-topic.js` (a blank four-scene talk), `gallery.js` (every world), `example-scenes.js` (three finished scenes) |
 | `scripts/build.sh` | Assembles one HTML file from the engine and your scene files |
+| `scripts/slides_in.py` | Reads an existing slideshow and writes an outline and a first-draft scene file |
 | `scripts/shot.sh`, `sheet.sh`, `gif.sh` | Render a still of any scene, tile four stills, or render a scene in motion as a GIF |
 | `references/` | The scene format, the world library, the environment options, and lessons learned |
 

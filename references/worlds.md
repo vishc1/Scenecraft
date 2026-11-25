@@ -1,6 +1,6 @@
 # The world library
 
-`assets/library/worlds.js` is included in every build. It holds thirteen ready-made worlds. A world is the 3D half of a scene: camera poses, the `build` function, labels pinned to 3D points, and framing. You supply the other half: id, title, beats, text.
+`assets/library/worlds.js` is included in every build. It holds fourteen ready-made worlds. A world is the 3D half of a scene: camera poses, the `build` function, labels pinned to 3D points, and framing. You supply the other half: id, title, beats, text.
 
 See them all: `scripts/build.sh out/gallery.html "World gallery" assets/examples/gallery.js`, then open `out/gallery.local.html`. `assets/examples/gallery.js` is also the shortest example of using each one.
 
@@ -32,6 +32,7 @@ Give the scene as many beats as the world animates (the "beats" column). Fewer i
 | `sea` | A bay at night under an eclipse, islands, a lighthouse with a sweeping beam. With `{sunrise:true}` it starts before dawn and the sun comes up | 2 | none |
 | `pages` | A storm of loose pages over a moonlit sea; on beat 1 they catch fire outward from the centre. Good behind a quotation (it sets a text scrim) | 3 | none |
 | `planet` | A rotating planet. Each beat lights more of its night side: scattered fires, towns, city networks, then everything, plus an orbital ring | 4 | none |
+| `towers` | One tower per item in calm water, heights following your numbers. Pass `items:[{label, value, note, show}]` (2 to 8). The only world whose geometry is set by data | 2 | from `items` |
 | `monoliths` | Six monoliths of rising height standing in calm water. They light up two per beat while the camera tracks along, then a wide shot | 3 | 6: one under each monolith |
 | `stairs` | A stone staircase out of the sea. Beat 0 lights thirteen steps one by one; beat 1 swings to the side; beat 2 shows nine ghost steps ahead and three glowing gates | 3 | 9: six markers on steps 1, 3, 5, 8, 12, 13, then the three gates |
 | `blocks` | Three blocks on rock pedestals. Each cycle they split into more cubes (about 5×, 3× and 280× over the loop); one block arrives per beat | 4 | 3: one under each block |
