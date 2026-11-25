@@ -1,0 +1,4 @@
+out/
+shots/
+*.local.html
+.DS_Store

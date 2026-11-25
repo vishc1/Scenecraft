@@ -1,0 +1,136 @@
+<title>{{TITLE}}</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* One full-window picture per scene; type sits on a 1920x1080 stage scaled to fit. */
+:root{
+  --ink:#08070d; --ink2:#12101a; --paper:#f2ede4; --soft:#c3bdcd; --dim:#958fa2;
+  --ember:#ff6b2c; --ice:#4fb8ff; --panel:rgba(14,12,20,.94); --line:rgba(242,237,228,.22);
+  --serif:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{margin:0;overflow:hidden;background:var(--ink);color:var(--paper);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;outline:none;touch-action:none;background:var(--ink)}
+#stage{position:fixed;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;pointer-events:none}
+.sc{position:absolute;inset:0;color:var(--paper)}
+.sc.light{color:var(--ink)}
+.sc.scrim::before{content:"";position:absolute;inset:-20%;background:radial-gradient(ellipse 52% 46% at 42% 46%,rgba(8,7,13,.86),rgba(8,7,13,.55) 55%,rgba(8,7,13,0) 100%)}
+.sc.scrimL::before{content:"";position:absolute;inset:-20%;background:linear-gradient(90deg,rgba(8,7,13,.92) 0%,rgba(8,7,13,.82) 42%,rgba(8,7,13,0) 66%)}
+.narrow .sc.scrimL::before{background:rgba(8,7,13,.55)}
+.sc.scrimS::before{content:"";position:absolute;inset:-20%;background:linear-gradient(90deg,rgba(8,7,13,.62) 0%,rgba(8,7,13,.46) 40%,rgba(8,7,13,0) 66%)}
+.narrow .sc.scrimS::before{background:rgba(8,7,13,.4)}
+.sc.light.scrim::before{background:radial-gradient(ellipse 52% 46% at 40% 52%,rgba(255,107,44,.92),rgba(255,107,44,.6) 55%,rgba(255,107,44,0) 100%)}
+
+/* zones */
+.z{position:absolute}
+.z.tl{left:120px;top:104px;max-width:1100px}
+.z.tr{right:120px;top:104px;max-width:760px;text-align:right}
+.z.ml{left:120px;top:50%;transform:translateY(-50%);max-width:1500px}
+.z.bl{left:120px;bottom:116px;max-width:860px}
+.z.br{right:120px;bottom:116px;max-width:760px;text-align:right}
+.z.bc{left:120px;bottom:44px;max-width:1200px}
+.z>*,.tag{opacity:0;transform:translateY(26px);filter:blur(10px);transition:opacity .7s ease-out,transform .8s cubic-bezier(.2,.7,.2,1),filter .7s ease-out;transition-delay:calc(var(--i,0)*90ms)}
+.z>.on,.tag.on{opacity:1;transform:none;filter:none}
+.z>.gone{display:none}
+.tag{position:absolute;left:0;top:0;transition-delay:0ms}
+.tag>div{transform:translate(-50%,-50%);text-align:center;white-space:nowrap}
+.tag.l>div{transform:translate(0,-50%);text-align:left}
+.tag.r>div{transform:translate(-100%,-50%);text-align:right}
+.tag.w>div{white-space:normal;width:236px}
+.tag.w2>div{white-space:normal;width:420px}
+
+/* type scale: 168 / 88 / 40 / 30 / 24 */
+h1,h2,h3,p{margin:0}
+h1{font:400 168px/1 var(--serif);letter-spacing:-4px;text-wrap:balance}
+h2{font:400 88px/1.05 var(--serif);letter-spacing:-2px;text-wrap:balance}
+h3{font:400 40px/1.15 var(--serif)}
+em{font-style:italic;color:var(--ember)}
+.light em{color:var(--ink)}
+.eb{font:500 24px/1.25 var(--mono);letter-spacing:4px;text-transform:uppercase;color:var(--ember);margin-bottom:26px}
+.light .eb{color:var(--ink)}
+.lede{font:400 40px/1.3 var(--sans);color:var(--soft);text-wrap:pretty}
+.light .lede{color:var(--ink)}
+.body{font:400 30px/1.4 var(--sans);color:var(--soft)}
+.lab{font:400 24px/1.3 var(--mono);letter-spacing:1px;color:var(--dim)}
+.lab.hi{color:var(--paper)} .lab.em{color:var(--ember)} .lab.ice{color:var(--ice)}
+.num{font:400 220px/1 var(--serif);letter-spacing:-6px}
+.fig{font:400 88px/1.05 var(--serif);letter-spacing:-2px}
+.sc:not(.light) .z,.sc:not(.light) .tag{text-shadow:0 2px 28px rgba(8,7,13,.85)}
+.gap{margin-top:28px}.gap2{margin-top:44px}
+.pt{border-top:1px solid var(--line);padding-top:18px;margin-top:22px}
+.vs{display:grid;grid-template-columns:300px 1fr 1fr;column-gap:40px}
+.vs>*{border-top:1px solid var(--line);padding:16px 0}
+.vs .m{color:var(--ember)} .vs .h{color:var(--paper)}
+.six{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 56px}
+.six>div{border-top:1px solid var(--line);padding-top:16px}
+.six .body{font-size:26px}
+
+/* narrow windows: stage is 1100 wide, zones stack */
+.narrow .z.tl,.narrow .z.ml,.narrow .z.tr{left:60px;right:60px;top:80px;transform:none;max-width:none;text-align:left}
+.narrow .z.bl,.narrow .z.br{left:60px;right:60px;bottom:150px;max-width:none;text-align:left}
+.narrow .z.bc{display:none}
+.narrow .z.ml{top:170px}
+.narrow #ttl{display:none}
+.narrow .z.free{left:60px!important;right:60px!important;width:auto!important;top:auto!important;bottom:150px!important}
+.narrow h1{font-size:132px}.narrow .num{font-size:160px}
+.narrow .tag.w p,.narrow .tag.w2 .body{display:none}
+.narrow .vs{grid-template-columns:200px 1fr 1fr;column-gap:20px}
+.narrow .six{grid-template-columns:repeat(2,1fr)}
+
+/* chrome */
+#ui{position:fixed;inset:0;pointer-events:none;font:14px/1.5 var(--mono);color:var(--soft);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#ui>*{pointer-events:auto}
+#hud{white-space:nowrap;position:absolute;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;gap:14px;align-items:center;letter-spacing:1px;pointer-events:none;transition:color .4s}
+#hud.light{color:var(--ink)}
+#pips{display:flex;gap:5px}
+#pips i{width:14px;height:2px;background:currentColor;opacity:.3}#pips i.on{opacity:1}
+#bar{position:absolute;left:0;bottom:0;height:2px;background:var(--ember);width:0;transition:width .5s}
+#ctl{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:6px;flex-wrap:wrap;transition:opacity .4s}
+body.idle #ctl{opacity:0}
+body.idle{cursor:none}
+button{font:inherit;color:var(--paper);background:var(--panel);border:1px solid var(--line);padding:6px 12px;cursor:pointer;border-radius:2px}
+button:hover{border-color:var(--ember)}
+button:focus-visible{outline:2px solid var(--ember);outline-offset:2px}
+body.idle #ctl:focus-within{opacity:1}
+#notes{position:absolute;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);
+  padding:18px max(24px,env(safe-area-inset-right,0px)) calc(54px + env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px))}
+#notes p{max-width:72ch;font:18px/1.5 var(--sans);color:var(--paper)}
+#over{position:absolute;inset:0;background:var(--panel);overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr));gap:12px;align-content:start;
+  padding:40px max(24px,env(safe-area-inset-right,0px)) 80px max(24px,env(safe-area-inset-left,0px))}
+#over button{text-align:left;padding:18px;display:grid;gap:8px}
+#over button b{font:400 30px/1.1 var(--serif);color:var(--paper)}
+#over button[aria-current=true]{border-color:var(--ember)}
+#help{position:absolute;right:max(20px,env(safe-area-inset-right,0px));bottom:60px;background:var(--panel);border:1px solid var(--line);padding:16px 20px;display:grid;grid-template-columns:auto auto;gap:4px 20px;max-width:calc(100vw - 40px)}
+#help b{font-weight:500;color:var(--paper)}
+#err{position:absolute;left:16px;top:16px;right:16px;color:#ffb199;white-space:pre-wrap;font:13px/1.4 var(--mono);pointer-events:none}
+@media (prefers-reduced-motion:reduce){.z>*,.tag{transition-duration:.01s;transition-delay:0s}}
+</style>
+<canvas id="gl" tabindex="0" aria-label="Animated scene behind the current slide"></canvas>
+<div id="stage"></div>
+<div id="ui">
+  <div id="err"></div>
+  <div id="bar"></div>
+  <div id="hud" aria-live="polite"><span id="where"></span><span id="ttl"></span><span id="pips"></span></div>
+  <div id="notes" hidden><p id="note"></p></div>
+  <div id="over" hidden></div>
+  <div id="help" hidden>
+    <b>→ / Space / click</b><span>next step</span>
+    <b>←</b><span>back</span>
+    <b>N</b><span>speaker notes</span>
+    <b>O</b><span>overview</span>
+    <b>F</b><span>full screen</span>
+    <b>?</b><span>this list</span>
+  </div>
+  <div id="ctl">
+    <button id="bPrev" type="button" aria-label="Previous step">←</button>
+    <button id="bNext" type="button" aria-label="Next step">→</button>
+    <button id="bNotes" type="button">Notes</button>
+    <button id="bOver" type="button">Overview</button>
+    <button id="bFull" type="button">Full screen</button>
+    <button id="bHelp" type="button" aria-label="Keyboard shortcuts">?</button>
+  </div>
+</div>
