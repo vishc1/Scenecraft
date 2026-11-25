@@ -9,7 +9,7 @@ OUT="$1"; TITLE="$2"; shift 2
 mkdir -p "$(dirname "$OUT")"
 { python3 -I -c 'import sys;print(open(sys.argv[1]).read().replace("{{TITLE}}",sys.argv[2]),end="")' "$E/head.html" "$TITLE"
   printf '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>\n<script>\n'
-  cat "$E/kit.js" "$E/env.js" "$@"
+  cat "$E/kit.js" "$E/env.js" "$E/../library/worlds.js" "$@"
   printf '</script>\n<script>\n'; cat "$E/engine.js"; printf '</script>\n'; } > "$OUT"
 LOCAL="${OUT%.html}.local.html"
 { printf '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0}[hidden]{display:none!important}</style></head><body>'; cat "$OUT"; } > "$LOCAL"

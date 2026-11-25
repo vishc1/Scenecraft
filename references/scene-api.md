@@ -4,9 +4,9 @@ Contents: files and load order · theme · scene fields · beats and state · te
 
 ## Files and load order
 
-`build.sh` concatenates, inside one script tag: `kit.js`, `env.js`, then your scene files in the order given, then `engine.js` in a second tag. Everything shares one global scope. Scene order in the talk is the order of `SC.push` calls.
+`build.sh` concatenates, inside one script tag: `kit.js`, `env.js`, the world library `worlds.js`, then your scene files in the order given, then `engine.js` in a second tag. Everything shares one global scope. Scene order in the talk is the order of `SC.push` calls.
 
-Your scene files can define their own top-level `const` helpers. Names already taken: `SC, THEME, INK, PAPER, EMBER, ICE, L, hdr, V3, RNG, lerp, clamp01, NZ, K, setI, ext, SKYS, SKY_GL, WAVE_GL, jhash, jnoise, jfbm`, and the scratch objects `_m _q _s _p _e _c`.
+Your scene files can define their own top-level `const` helpers. Names already taken: `SC, THEME, INK, PAPER, EMBER, ICE, L, hdr, V3, RNG, lerp, clamp01, NZ, K, setI, ext, SKYS, SKY_GL, WAVE_GL, jhash, jnoise, jfbm, WORLDS, finish, seaWorld`, and the scratch objects `_m _q _s _p _e _c`.
 
 `ext(id, {...})` merges more fields into a scene already pushed. Useful for keeping text in one file and worlds in another.
 
@@ -139,3 +139,5 @@ Right arrow, space or click advances; left arrow goes back; N speaker notes; O o
 ## The screenshot URL
 
 `page.local.html?shot=<id>.<beat>.<time>` jumps to that scene with all beats up to `<beat>` finished and the clock at `<time>` seconds (default 9), hides the controls, and prints any shader or build error on the page in red. `scripts/shot.sh` wraps this with headless Chromium on a software renderer, which is slow (10 to 30 seconds a shot) but needs no GPU. Run up to four in parallel with `&` and `wait`.
+
+A second form, `?shot=<id>:<beat>:<time>:<fraction>`, uses colons so the time can be fractional, and freezes the current beat part-way (fraction 0 to 1). `scripts/gif.sh <page> <id> <beats> <out.gif>` uses it to render a whole scene in motion: every beat from start to finish while the clock runs. Use it to check camera moves and staged reveals, which stills cannot show.

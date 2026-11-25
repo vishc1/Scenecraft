@@ -20,9 +20,9 @@ Work in a scratch folder. Copy nothing from the skill; reference it in place.
 1. **Write the story as beats before any code.** List 8 to 14 scenes. For each: a title, the one idea, and 2 to 4 beats (a beat is one click; it reveals text and moves the world). Share the scene list with the user in a few lines and keep going unless the brief is unclear.
 2. **Pick a visual metaphor per scene** (see "Choosing the world" below). This is the step that decides whether the talk is good. Spend real thought here.
 3. **Pick the look once**: four theme colours in `THEME` (see `references/scene-api.md`), and a sky preset per scene so the talk has a time-of-day arc.
-4. **Write scenes** in one or more `scenes-*.js` files. Copy `assets/examples/starter-any-topic.js` into your scratch folder as the starting point: it is a working four-scene talk with placeholder text (title, a list of numbers as towers, one-becomes-many, sunrise close), its own colour theme and a custom sky, so you can build and render it before changing anything. Then look at `assets/examples/example-scenes.js` for three finished scenes from a real talk, including a mechanism that changes on every beat. Read `references/scene-api.md` for the format and the helpers. The starter's four shapes are a floor, not a template for the whole talk: most scenes should be worlds you design for this subject.
+4. **Write scenes** in one or more `scenes-*.js` files. For each scene decide: reuse a world from the library (`WORLDS.name(...)`, thirteen of them, see `references/worlds.md`), adapt one by copying its code, or build a new world. Aim for a mix; a talk made only of library worlds looks like every other talk made with this kit, so design at least a few worlds for this subject. Copy `assets/examples/starter-any-topic.js` into your scratch folder as the starting point: it is a working four-scene talk with placeholder text (title, a list of numbers as towers, one-becomes-many, sunrise close), its own colour theme and a custom sky, so you can build and render it before changing anything. Then look at `assets/examples/example-scenes.js` for three finished scenes from a real talk, including a mechanism that changes on every beat. Read `references/scene-api.md` for the format and the helpers. The starter's four shapes are a floor, not a template for the whole talk: most scenes should be worlds you design for this subject.
 5. **Build**: `scripts/build.sh out/talk.html "Talk Title" scenes-a.js scenes-b.js`
-6. **Look at every scene** before showing anyone: `scripts/shot.sh out/talk.local.html <sceneId>.<beat> shots/x.png`, four at a time into `scripts/sheet.sh`. Fix what you see, rebuild, re-shoot. Check two scenes at phone size (`420,860`) and the plain startup path (`shot.sh page "" out.png`).
+6. **Look at every scene** before showing anyone, and watch the important ones move with `scripts/gif.sh out/talk.local.html <sceneId> <beats> shots/x.gif`, which sweeps every beat into a GIF. Stills: `scripts/shot.sh out/talk.local.html <sceneId>.<beat> shots/x.png`, four at a time into `scripts/sheet.sh`. Fix what you see, rebuild, re-shoot. Check two scenes at phone size (`420,860`) and the plain startup path (`shot.sh page "" out.png`).
 7. **Publish** the built file (as an artifact if that tool is available) and tell the user plainly what you verified and what you did not. Stills prove the scenes build and are framed; they do not prove motion, transitions or frame rate. Say that.
 
 Read `references/lessons.md` before writing your first scene. It is a short list of the mistakes that cost the most time when this kit was built, each with its fix.
@@ -63,6 +63,8 @@ SC.push({
 });
 ```
 
+To reuse a library world instead of writing `cams` and `build`, spread it first and add your text: `SC.push({...WORLDS.gyro({labels:['Plan','Build','Measure','Learn']}), id:'cycle', title:'The cycle', kind:4, beats:[...], layers:[...]})`.
+
 The engine blends the camera through `cams` as beats complete, projects `tags` every frame, fades text in and out, renders the mirror pass for water reflections when you return `env`, and runs bloom, tone mapping, grain and the transition. Full details and every helper are in `references/scene-api.md`.
 
 ## Standards to hold
@@ -76,7 +78,9 @@ The engine blends the camera through `cams` as beats complete, projects `tags` e
 ## Reference files
 
 - `references/scene-api.md`: the scene format, text zones and classes, camera and framing maths, the `K` helpers, HDR colour, instancing, transitions, the screenshot URL. Read before writing scenes.
+- `references/worlds.md`: the thirteen ready-made worlds, their beats and labels, how to adapt one, and how to add your own to the library. Read when choosing worlds.
 - `references/environment.md`: `K.env` options, the sky presets and how to add one, ocean level and wave height, islands, blending two skies for a sunrise, when not to use the ocean. Read when a scene needs a place.
 - `references/lessons.md`: failure modes and fixes (overexposure, invisible water, tags off screen, black unlit objects against bright skies, patch scripts that silently fail). Read once at the start.
 - `assets/examples/starter-any-topic.js`: a working, topic-neutral four-scene talk to start from.
+- `assets/examples/gallery.js`: every library world in one talk, with placeholder text.
 - `assets/examples/example-scenes.js`: three finished scenes from a real talk, to copy patterns from.

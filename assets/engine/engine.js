@@ -89,7 +89,7 @@ function positionTags(sc,w){ (sc.tags||[]).forEach((T,i)=>{ const el=sc.tel[i]; 
 /* ---------- loop ---------- */
 let ema=.016, slow=0;
 function frame(now){ const dt=Math.min(.1,(now-last)/1000||0); last=now; if(!SHOT) clock+=dt; const sc=SC[cur];
-  st.T=clock-st.t0; for(let i=0;i<4;i++){ const b=sc.beats[i]; if(b&&i<=st.bi) st.raw[i]=Math.min(1,st.raw[i]+dt/(RM?.05:b.dur||1.6)); else st.raw[i]=Math.max(0,st.raw[i]-dt*2.5); st.P[i]=ease(st.raw[i]); }
+  st.T=clock-st.t0; for(let i=0;i<4;i++){ const b=sc.beats[i]; if(!SHOT){ if(b&&i<=st.bi) st.raw[i]=Math.min(1,st.raw[i]+dt/(RM?.05:b.dur||1.6)); else st.raw[i]=Math.max(0,st.raw[i]-dt*2.5); } st.P[i]=ease(st.raw[i]); }
   if(R){ const w=world(sc);
     if(w){ aim(sc,w,st); if(w.update) w.update(st,SHOT?.016:dt); positionTags(sc,w);
       if(w.env){ const E=w.env, cam=w.camera; E.tick(st.T); if(E.ocean){ const lv=E.level; rc.fov=cam.fov; rc.aspect=cam.aspect; rc.near=cam.near; rc.far=cam.far; rc.filmOffset=cam.filmOffset; rc.updateProjectionMatrix();
@@ -131,8 +131,8 @@ addEventListener('hashchange',()=>{ const m=/^#s(\d+)$/.exec(location.hash); if(
 /* ---------- start ---------- */
 layout();
 let first=0; const m=/^#s(\d+)$/.exec(location.hash); if(m) first=Math.min(SC.length-1,Math.max(0,+m[1]-1));
-if(SHOT){ const [id,b,t]=SHOT.split('.'); first=Math.max(0,SC.findIndex(s=>s.id===id)); clock=+(t||9); $('ctl').hidden=true; document.body.classList.add('idle');
-  go(first,false,2); st.bi=Math.min(+b||0,SC[first].beats.length-1); st.raw=st.raw.map((v,i)=>i<=st.bi?1:0); st.t0=0; apply(); }
+if(SHOT){ const [id,b,t,fr]=SHOT.indexOf(':')>=0?SHOT.split(':'):SHOT.split('.'); first=Math.max(0,SC.findIndex(s=>s.id===id)); clock=+(t||9); $('ctl').hidden=true; document.body.classList.add('idle');
+  go(first,false,2); st.bi=Math.min(+b||0,SC[first].beats.length-1); st.raw=st.raw.map((v,i)=>i<=st.bi?1:0); if(fr!==undefined) st.raw[st.bi]=Math.max(0,Math.min(1,+fr)); st.t0=0; apply(); }
 else go(first,false,1);
 if(!R) fail('This browser has no WebGL, so the animated scenes are off. The text still works.');
 requestAnimationFrame(t=>{ last=t; requestAnimationFrame(frame); });
